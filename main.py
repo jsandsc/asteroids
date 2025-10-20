@@ -6,15 +6,27 @@ from constants import *
 from player import Player
 
 def main():
+    # Initialize pygame
     pygame.init()
 
-    clock = pygame.time.Clock()
-    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-    dt = 0
-
+    # Print out the start-up text
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
+
+    # Create groups for updatable and drawable objects
+    updateable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+
+    # Add the Player class to both of the groups
+    Player.containers = (updateable, drawable)
+
+    # Create the instances of player and clock
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    clock = pygame.time.Clock()
+    dt = 0
+
+    # Specify window dimensions for game display
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
     while True:
@@ -23,10 +35,12 @@ def main():
                 return
 
         screen.fill((0,0,0))
-        player.update(dt)
-        player.draw(screen)
 
-        pass
+        for entity in updateable:
+            entity.update(dt)
+
+        for entity in drawable:
+            entity.draw(screen)
 
         pygame.display.flip()
         dt = clock.tick(60) / 1000
